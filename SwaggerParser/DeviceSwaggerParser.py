@@ -6,6 +6,7 @@ Created on 12-Dec-2016
 '''
 import packages and Constants
 '''
+import os
 import yaml
 from Config import Constants
 from Config.Constants import positive_testfunc_file, negative_testfunc_file, networkdevices_swagger
@@ -21,6 +22,7 @@ class DeviceSwaggerParser(DeviceSwaggerParserHelper.DeviceSwaggerParserHelper):
         '''
         Empty the files containing TestCase Functions
         ''' 
+        print positive_testfunc_file
         open(positive_testfunc_file, 'w').close()
         open(negative_testfunc_file, 'w').close()
     
@@ -125,30 +127,30 @@ for scenerio in Constants.scenerio_list:
             obj_flag = 0
             try:
                     for m in data[k][l]["parameters"]:
-                        
+                         
                         if 'in' in m:
                             if(m['in'] == "body"):
                                 objtype_func = obj.get_objtype_func(m, scenerio)
                                 obj_flag = 1
                             else:
                                 obj.parameter_func = obj.get_param_func(m,scenerio)
-                                
+                                 
                         else:
                             obj.parameter_func = obj.get_param_func(m,scenerio)
-                    
+                     
                     if(obj_flag == 1):
                         bravado_func = func_name+"("+",".join(obj.parameter_func)+","+"".join(objtype_func)
                         print(bravado_func, tag_name)
                     else:
                         bravado_func = func_name+"("+",".join(obj.parameter_func)+")"
                         print(bravado_func, tag_name)
-                    
+                     
                     if (scenerio == 'positive'):
                         obj.save_bravado_func(bravado_func, tag_name, positive_testfunc_file)
                     elif (scenerio == 'negative'):
                         obj.save_bravado_func(bravado_func, tag_name, negative_testfunc_file)
-            
+             
             except Exception as e:
                     print str(e)
-                
+                 
             obj.parameter_name, obj.parameter_type, obj.parameter_data, obj.parameter_value, obj.parameter_func = ([] for i in range(5))                

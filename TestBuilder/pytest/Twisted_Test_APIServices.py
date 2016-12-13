@@ -18,17 +18,16 @@ from bravado.client import SwaggerClient
 from bravado_core.exception import SwaggerMappingError
 
 global func_dict
-positive_testcase_log_file = "/opt/AutomationWorkSpace/GenericTestCaseGenerator/TestBuilder/output_files/positive_testcase_log_file"
-positive_testfunc_file = "/opt/AutomationWorkSpace/GenericTestCaseGenerator/SwaggerParser/output_files/positive_testfunc_file"
-networkdevices_swagger = "/opt/AutomationWorkSpace/GenericTestCaseGenerator/SwaggerConnexion/networkdevices_swagger.yaml"
+project_path = "/opt/AutomationWorkSpace/GenericTestCaseGenerator"
+positive_testcase_log_file = project_path+"/TestBuilder/output_files/positive_testcase_log_file"
+positive_testfunc_file = project_path+"/SwaggerParser/output_files/positive_testfunc_file"
+networkdevices_swagger = project_path+"/SwaggerConnexion/networkdevices_swagger.yaml"
 open(positive_testcase_log_file, 'w').close()  
 client = SwaggerClient.from_url("http://localhost:8080/swagger.json", config={'also_return_response': True, 'validate_responses': False, 'validate_requests': False, 'validate_swagger_spec': False})
 
 @pytest.fixture
 def networkDevice():
     return SwaggerClient.from_url('http://localhost:8080/swagger.json', config={'also_return_response': True, 'validate_responses': False, 'validate_requests': False, 'validate_swagger_spec': False})
-    #return SwaggerClient.from_url('http://petstore.swagger.io/v2/swagger.json', config={'also_return_response': True, 'validate_responses': False, 'validate_requests': False, 'validate_swagger_spec': False})
-
 
 def get_innerobj_paramvalue(argvalue):
     obj_model = "{".join(argvalue.split("{", 2)[:2])
@@ -110,7 +109,7 @@ def get_func_name(bravado_func):
    
 def get_integer_parameters():
     int_type_parameters = []
-    with open("/opt/AutomationWorkSpace/GenericTestCaseGenerator/SwaggerConnexion/networkdevices_swagger.yaml", 'r') as f:    
+    with open(networkdevices_swagger, 'r') as f:    
         doc = yaml.load(f)
         data = doc["paths"]
         for k in data.keys():
@@ -238,16 +237,17 @@ import yaml
 from twisted.internet import reactor, defer
 from bravado.client import SwaggerClient
 from twisted.internet.defer import Deferred, DeferredList
-negative_testcase_log_file = "/opt/AutomationWorkSpace/GenericTestCaseGenerator/TestBuilder/output_files/negative_testcase_log_file"
-networkdevices_swagger = "/opt/AutomationWorkSpace/GenericTestCaseGenerator/SwaggerConnexion/networkdevices_swagger.yaml"
-negative_testfunc_file = "/opt/AutomationWorkSpace/GenericTestCaseGenerator/SwaggerParser/output_files/negative_testfunc_file"
+
+project_path = "/opt/AutomationWorkSpace/GenericTestCaseGenerator"
+negative_testcase_log_file = project_path+"/TestBuilder/output_files/negative_testcase_log_file"
+networkdevices_swagger = project_path+"/SwaggerConnexion/networkdevices_swagger.yaml"
+negative_testfunc_file = project_path+"/SwaggerParser/output_files/negative_testfunc_file"
 open(negative_testcase_log_file, 'w').close()
 client = SwaggerClient.from_url("http://localhost:8080/swagger.json", config={'also_return_response': True, 'validate_responses': False, 'validate_requests': False, 'validate_swagger_spec': False})
    
 @pytest.fixture
 def networkDevice():
     return SwaggerClient.from_url('http://localhost:8080/swagger.json', config={'also_return_response': True, 'validate_responses': False, 'validate_requests': False, 'validate_swagger_spec': False})
-    #return SwaggerClient.from_url('http://petstore.swagger.io/v2/swagger.json', config={'also_return_response': True, 'validate_responses': False, 'validate_requests': False, 'validate_swagger_spec': False})
    
 def get_innerobj_paramvalue(argvalue):
     obj_model = "{".join(argvalue.split("{", 2)[:2])
@@ -328,7 +328,7 @@ def get_func_name(bravado_func):
       
 def get_integer_parameters():
     int_type_parameters = []
-    with open("/opt/AutomationWorkSpace/GenericTestCaseGenerator/SwaggerConnexion/networkdevices_swagger.yaml", 'r') as f:    
+    with open(networkdevices_swagger, 'r') as f:    
         doc = yaml.load(f)
         data = doc["paths"]
         for k in data.keys():
