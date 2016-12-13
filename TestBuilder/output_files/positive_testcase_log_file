@@ -1,0 +1,4 @@
+FunctionName: put_device(device_id=2,device=client.get_model[device][category:-client.get_model{Category}{id--7:name--KeyBoard};id:-3;device_type:-Peripheral;name:-KeyBoard])  && HttpResponse: 201 && ResultType: NoneType && Result: None
+FunctionName: delete_device(device_id=4)  && HttpResponse: 404 && ResultType: NoneType && Result: 404 NOT FOUND
+FunctionName: get_devices(device_type=Peripheral,limit=10)  && HttpResponse: 200 && ResultType: bravado_core.model.device && Result: [device(category=Category(id=7L, name=u'KeyBoard'), device_type=u'Peripheral', id=2, name=u'KeyBoard')]
+FunctionName: get_device(device_id=9)  && HttpResponse: 404 && ResultType: NoneType && Result: 404 NOT FOUND

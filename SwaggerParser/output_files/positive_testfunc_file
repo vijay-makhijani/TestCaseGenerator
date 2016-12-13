@@ -1,0 +1,4 @@
+get_devices(device_type=Peripheral,limit=10) && devices
+put_device(device_id=2,device=client.get_model[device][category:-client.get_model{Category}{id--7:name--KeyBoard};id:-3;device_type:-Peripheral;name:-KeyBoard]) && devices
+get_device(device_id=9) && devices
+delete_device(device_id=4) && devices

@@ -1,0 +1,130 @@
+swagger: '2.0'
+info:
+  title: Devices API
+  version: "0.1"
+consumes:
+  - application/json
+produces:
+  - application/json
+security:
+  # enable OAuth protection for all REST endpoints
+  # (only active if the TOKENINFO_URL environment variable is set)
+  - oauth2: [uid]
+paths:
+  /devices:
+    get:
+      tags: [devices]
+      operationId: get_devices
+      summary: Get all devices
+      parameters:
+        - name: device_type
+          in: query
+          type: string
+          pattern: "^[a-zA-Z0-9]*$"
+        - name: limit
+          in: query
+          type: integer
+          minimum: 0
+          default: 100
+      responses:
+        200:
+          description: Return devices
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/device'
+        400:
+          description: Invalid Data Supplied              
+  /devices/{device_id}:
+    get:
+      tags: [devices]
+      operationId: get_device
+      summary: Get a single device
+      parameters:
+        - $ref: '#/parameters/device_id'
+      responses:
+        200:
+          description: Return device
+          schema:
+            $ref: '#/definitions/device'
+        404:
+          description: device does not exist
+        400:
+          description: Invalid Data Supplied             
+    put:
+      tags: [devices]
+      operationId: put_device
+      summary: Create or update a device
+      parameters:
+        - $ref: '#/parameters/device_id'
+        - name: device
+          in: body
+          schema:
+            $ref: '#/definitions/device'
+      responses:
+        200:
+          description: device updated
+        201:
+          description: New device created
+        400:
+          description: Invalid Data Supplied             
+    delete:
+      tags: [devices]
+      operationId: delete_device
+      summary: Remove a device
+      parameters:
+        - $ref: '#/parameters/device_id'
+      responses:
+        204:
+          description: device was deleted
+        404:
+          description: device does not exist
+        400:
+          description: Invalid Data Supplied          
+
+
+parameters:
+  device_id:
+    name: device_id
+    description: device's Unique identifier
+    in: path
+    type: integer
+    minimum: 1 
+    maximum: 10
+    required: true
+
+definitions:
+  device:
+    type: object
+    required:
+      - name
+      - device_type
+    properties:
+      id:
+        type: integer
+        description: Unique identifier
+        example: 1
+        readOnly: true
+      name:
+        type: string
+        description: device's name
+        example: "Modem"
+        pattern: "^[a-zA-Z0-9-]+$"        
+        minLength: 1
+        maxLength: 100
+      device_type:
+        type: string
+        description: Kind of device
+        example: "Network"
+        pattern: "^[a-zA-Z0-9-]+$"        
+        minLength: 1
+        maxLength: 100        
+
+
+securityDefinitions:
+  oauth2:
+    type: oauth2
+    flow: implicit
+    authorizationUrl: https://example.com/oauth2/dialog
+    scopes:
+      uid: Unique identifier of the user accessing the service.

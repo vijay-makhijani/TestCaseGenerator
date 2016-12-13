@@ -1,0 +1,4 @@
+get_devices(device_type=dsak*463@90,limit=-1) && devices
+put_device(device_id=0,device=client.get_model[device][category:-client.get_model{Category}{id--0:name--dsak*463@90};id:-0;device_type:-sdk^&%kjshsd;name:-#gfdsadfk09]) && devices
+get_device(device_id=0) && devices
+delete_device(device_id=0) && devices
