@@ -6,7 +6,7 @@ Created on 12-Dec-2016
 '''
 import packages
 '''
-import random, string
+import random
 import exrex
 from random import randint
 from Config import Constants
@@ -35,7 +35,7 @@ class DeviceSwaggerParserHelper(object):
         else:
             maxLength = m["maxLength"]
         if 'maxLength' not in m:
-            maxLength = 100
+            maxLength = 10
         else:
             minLength = m["maxLength"]     
         return(minLength,maxLength)
@@ -43,8 +43,11 @@ class DeviceSwaggerParserHelper(object):
     '''
     Generate a random word of given length
     '''
-    def randomword(self, length):
-        return ''.join(random.choice(string.lowercase) for i in range(length))
+    def randomword(self, length, pattern):
+        random_str = exrex.getone(pattern)[:1]
+        for i in range(length - 1):
+            random_str = random_str + (exrex.getone(pattern)[:1])
+        return random_str
 
     '''
     Generate a random word for the given pattern
@@ -59,40 +62,141 @@ class DeviceSwaggerParserHelper(object):
         f1=open(filename,"a")
         print >>f1, bravado_func, '&&' , tag_name
         
-        
+
     '''
     Get Parameter Values
     '''
-    def get_param_value(self, param_type, param_name, scenerio, m):
+    def get_param_value(self, value_type, param_type, param_name, scenerio, m, enum_value = []):
         if(scenerio == 'positive'):
-                            if (param_type == "integer"):
+            if (value_type == "lower_boundary"):
+                
+                            if (len(enum_value) > 0):
+                                self.parameter_value = random.choice(enum_value)
+                                                
+                            elif (param_type == "integer"):
                                 minimum, maximum = self.get_min_max_values(m)
-                                self.parameter_value = randint(minimum, maximum)
+                                self.parameter_value = minimum
                                 
-                            elif (param_type == "string" and param_name =='device_type'):
-                                self.parameter_value = random.choice(Constants.devices_type) 
-                            
+                                
                             elif (param_type == "string"):
-                                self.parameter_value = random.choice(Constants.devices) 
+                                minLength, maxLength = self.get_min_max_length(m)
+                                if 'pattern' not in m:
+                                    pattern = "^[a-zA-Z0-9]*$"
+                                else:
+                                    pattern = m["pattern"]
+                                self.parameter_value = self.randomword(minLength, pattern)
+                                
                                 
                             elif ('client.get_model' in param_type):
                                 self.parameter_value = param_type                                     
                                 
                             else:
-                                self.parameter_value = "Vijay"
-                                  
+                                self.parameter_value = "UnsupportedDatatype"                
+                
+            elif (value_type == "upper_boundary"):
+                
+                            if (len(enum_value) > 0):
+                                self.parameter_value = random.choice(enum_value)                
+                
+                            elif (param_type == "integer"):
+                                minimum, maximum = self.get_min_max_values(m)
+                                self.parameter_value = maximum
+
+                            elif (param_type == "string"):
+                                minLength, maxLength = self.get_min_max_length(m)
+                                if 'pattern' not in m:
+                                    pattern = "^[a-zA-Z0-9]*$"
+                                else:
+                                    pattern = m["pattern"]
+                                self.parameter_value = self.randomword(maxLength, pattern)
+                                
+                                
+                            elif ('client.get_model' in param_type):
+                                self.parameter_value = param_type                                     
+                                
+                            else:
+                                self.parameter_value = "UnsupportedDatatype"                
+                
+                
+                
+            elif (value_type == "random"):
+                
+                            if (len(enum_value) > 0):
+                                self.parameter_value = random.choice(enum_value)                
+                
+                            elif (param_type == "integer"):
+                                minimum, maximum = self.get_min_max_values(m)
+                                self.parameter_value = randint(minimum + 1, maximum - 1)
+                                
+                            elif (param_type == "string"):
+                                minLength, maxLength = self.get_min_max_length(m)
+                                if 'pattern' not in m:
+                                    pattern = "^[a-zA-Z0-9]*$"
+                                else:
+                                    pattern = m["pattern"]
+                                self.parameter_value = self.randomword(randint(minLength + 1, maxLength - 1), pattern)
+                                
+                            elif ('client.get_model' in param_type):
+                                self.parameter_value = param_type                                     
+                                
+                            else:
+                                self.parameter_value = "UnsupportedDatatype"                         
+            
+                
         elif(scenerio == 'negative'):
+            if (value_type == "lower_boundary"):
+                
                             if (param_type == "integer"):
                                 minimum, maximum = self.get_min_max_values(m)
                                 self.parameter_value = minimum - 1
-  
+                                
                             elif (param_type == "string"):
-                                self.parameter_value = random.choice(Constants.invalid_devices)
+                                minLength, maxLength = self.get_min_max_length(m)
+                                pattern = "^[%@~!*+]*$"                                
+                                self.parameter_value = self.randomword(minLength, pattern)
+                                
                                 
                             elif ('client.get_model' in param_type):
-                                self.parameter_value = param_type                                  
+                                self.parameter_value = param_type                                     
                                 
                             else:
-                                self.parameter_value = "Vijay" 
+                                self.parameter_value = "UnsupportedDatatype"                
+                
+            elif (value_type == "upper_boundary"):
+                
+                            if (param_type == "integer"):
+                                minimum, maximum = self.get_min_max_values(m)
+                                self.parameter_value = maximum + 1
                                 
+                            elif (param_type == "string"):
+                                minLength, maxLength = self.get_min_max_length(m)
+                                pattern = "^[%@~!*+]*$"                                
+                                self.parameter_value = self.randomword(maxLength + 1, pattern)
+                                
+                                
+                            elif ('client.get_model' in param_type):
+                                self.parameter_value = param_type                                     
+                                
+                            else:
+                                self.parameter_value = "UnsupportedDatatype"                
+                
+                
+                
+            elif (value_type == "random"):
+                
+                            if (param_type == "integer"):
+                                minimum, maximum = self.get_min_max_values(m)
+                                self.parameter_value = minimum - randint(minimum + 1, maximum)
+                                
+                            elif (param_type == "string"):
+                                minLength, maxLength = self.get_min_max_length(m)
+                                pattern = "^[%@~!*+]*$"
+                                self.parameter_value = self.randomword(randint(minLength , maxLength), pattern)
+                                
+                            elif ('client.get_model' in param_type):
+                                self.parameter_value = param_type                                     
+                                
+                            else:
+                                self.parameter_value = "UnsupportedDatatype"                         
+            
         return self.parameter_value

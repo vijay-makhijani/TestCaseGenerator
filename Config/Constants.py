@@ -9,9 +9,8 @@ positive_testcase_log_file = project_path+"/TestBuilder/output_files/positive_te
 negative_testfunc_file = project_path+"/SwaggerParser/output_files/negative_testfunc_file"
 positive_testfunc_file = project_path+"/SwaggerParser/output_files/positive_testfunc_file"
 HTMLTestReport_file = project_path+"/ReportGenerator/output_files/HTMLTestReport.html"
-networkdevices_swagger = project_path+"/SwaggerConnexion/networkdevices_swagger.yaml"
+#swaggerFile = project_path+"/SwaggerConnexion_nbtlpc/nbtlpc.yaml"
+swaggerFile = project_path+"/SwaggerConnexion/networkdevices_swagger.yaml"
 
-invalid_devices = ["dsak*463@90", "sdk^&%kjshsd", "#gfdsadfk09"]
-devices = ["Switch", "Router", "Hub", "Gateway", "NIC", "Bridge", "Modem", "KeyBoard", "Mouse", "Monitor"]
-devices_type = ["Peripheral", "Network"]
 scenerio_list = ['positive','negative']
+value_type_list = ['lower_boundary', 'upper_boundary', 'random']

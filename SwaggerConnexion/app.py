@@ -1,21 +1,19 @@
 #!/usr/bin/env python3
 import connexion
 import logging
-import time
-from random import randint
 from time import sleep
+from Config import Constants
 from connexion import NoContent
 
 # our memory-only device storage
 DEVICES = {}
+
 
 def get_devices(limit, device_type=None):
     return [device for device in DEVICES.values() if not device_type or device['device_type'] == device_type][:limit]
 
 def get_device(device_id):
     device = DEVICES.get(device_id)
-    sleep(5)
-    #sleep(randint(0,10))
     return device or ('Not found', 404)
 
 
@@ -42,7 +40,7 @@ def delete_device(device_id):
 
 logging.basicConfig(level=logging.INFO)
 app = connexion.App(__name__)
-app.add_api('networkdevices_swagger.yaml')
+app.add_api(Constants.swaggerFile)
 # set the WSGI application callable to allow using uWSGI:
 # uwsgi --http :8080 -w app
 application = app.app

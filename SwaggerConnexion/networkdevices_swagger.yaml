@@ -20,7 +20,12 @@ paths:
         - name: device_type
           in: query
           type: string
-          pattern: "^[a-zA-Z0-9]*$"
+          enum:
+            - Input
+            - Output
+            - Storage 
+            - Network
+          
         - name: limit
           in: query
           type: integer
@@ -67,7 +72,9 @@ paths:
         201:
           description: New device created
         400:
-          description: Invalid Data Supplied             
+          description: Invalid Data Supplied 
+        404:
+          description: device does not exist                      
     delete:
       tags: [devices]
       operationId: delete_device
@@ -116,9 +123,11 @@ definitions:
         type: string
         description: Kind of device
         example: "Network"
-        pattern: "^[a-zA-Z0-9-]+$"        
-        minLength: 1
-        maxLength: 100         
+        enum:
+        - Input
+        - Output
+        - Storage 
+        - Network 
       category:
         "$ref": "#/definitions/Category"   
         

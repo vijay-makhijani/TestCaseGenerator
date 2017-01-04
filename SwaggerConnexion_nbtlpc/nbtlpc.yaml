@@ -1,0 +1,127 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Nebbiolo Technologies basic IPC services
+  description: The IPC Basic header structure shared between a server and client
+host: localhost:8080
+schemes:
+- http
+- https
+- wss
+paths:
+  "/admin/v1.0/ipc/basic":
+    get:
+      tags:
+      - NbtIpc
+      operationId: ipc
+      parameters:
+        - name: limit
+          in: query
+          type: integer
+          minimum: 0
+          maximum: 10
+          default: 5     
+      description: IPC headers/API used by all control plane entities to communicate
+        between each other.
+      responses:
+        200:
+          description: Return IpcHdr
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/IpcHdr'
+        400:
+          description: Invalid Data Supplied        
+    
+    put:
+      tags:
+      - NbtIpc
+      operationId: put_ipc
+      description: IPC headers/API used by all control plane entities to communicate
+        between each other.
+      parameters:
+        - name: IpcHdr
+          in: body
+          schema:
+            $ref: '#/definitions/IpcHdr'        
+      responses:
+        200:
+          description: ipc updated
+        201:
+          description: New ipc created
+        400:
+          description: Invalid Data Supplied 
+        404:
+          description: ipc does not exist       
+                    
+definitions:
+  IpcHdr:
+    type: object
+    properties:
+      tid:
+        type: string
+        description: The transaction identifier for the IPC message, recommended str(uuid.uuid4())
+      reqtid:
+        type: string
+        description: The transaction identifier of the request placed in response
+          messages. This field is set to null for requests messages
+      sender:
+        type: string
+        enum:
+        - UNKNOWN
+        - IDPROMDRVR
+        - BRCMTOOL
+        - STP
+        - ENVMON
+        - BOARDMGR
+        - BOARDMGRCLIENT
+        - FPGA
+        - FLADMINMGR
+        description: Enumeration that identifies the source/destination of an IPC
+          message. This is useful for logging the message and debugging
+      receiver:
+        type: string
+        enum:
+        - UNKNOWN
+        - IDPROMDRVR
+        - BRCMTOOL
+        - STP
+        - ENVMON
+        - BOARDMGR
+        - FPGA
+        - FLADMINMGR
+        description: Enumeration that identifies the source/destination of an IPC
+          message. This is useful for logging the message and debugging
+      cast:
+        type: string
+        enum:
+        - UNKNOWN
+        - UNICAST
+        - MULTICAST
+        description: Enumeration that identifies the IPC message cast one-one, one-to-many
+      synctype:
+        type: string
+        enum:
+        - UNKNOWN
+        - SYNC
+        - ASYNC
+        description: Enumeration that identifies the IPC message handling characteristics,
+          sync/async
+      payload:
+        type: string
+        description: Holds the message to be sent to the receiver. If set this must
+          be a json object and nota json string. Best don't set and pass the object
+          to the api
+      resproute:
+        type: string
+        description: This is an internal field and not required by client. Values
+          will get overwrittern. For the curious, We have to support multiple instances
+          of sender and receiver endpoint within a given app or across apps. We deal
+          with this by creating a unique queue per instance of receiver and bind a
+          unique topic for that receiver. We send that internal topic to the receiver
+          who replies back using this field. We do not support three way routing for
+          now and will come to that if required later.
+      command:
+        type: string
+        description: This is an internal field and not required by client. This field
+          stores the class name for this serialized data and is used for deserialization

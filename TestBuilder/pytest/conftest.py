@@ -1,5 +1,4 @@
 import pytest
-
 from bravado.client import SwaggerClient
 
 # TODO: remove

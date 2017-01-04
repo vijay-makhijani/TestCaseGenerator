@@ -10,12 +10,12 @@ import packages and Constants
 import yaml
 import json
 import re
-from Config.Constants import negative_testcase_log_file, negative_testfunc_file, positive_testcase_log_file, positive_testfunc_file, HTMLTestReport_file, networkdevices_swagger
+from Config.Constants import negative_testcase_log_file, negative_testfunc_file, positive_testcase_log_file, positive_testfunc_file, HTMLTestReport_file, swaggerFile
 
 class TestReportGenerator(object):
      
     '''
-    Find Return types of responses from Swagger file
+    Search for the ref keyword within the Swagger file and return its value
     '''
     def find_values(self, ref, json_repr):
         results = []
@@ -31,7 +31,7 @@ class TestReportGenerator(object):
     Find Return types of responses from Swagger file
     '''
     def get_Response_Type(self):
-        with open(networkdevices_swagger, 'r') as f:    
+        with open(swaggerFile, 'r') as f:    
             doc = yaml.load(f)
         data = doc["paths"]
         definitions = {}
@@ -51,37 +51,39 @@ class TestReportGenerator(object):
     '''
     
     def get_Parameters_Datatype(self):
-        with open(networkdevices_swagger, 'r') as f:    
+        with open(swaggerFile, 'r') as f:    
             doc = yaml.load(f)
     
-        data = doc["definitions"]
-        data_type = {}
-        param = []
-        for k in data.keys():
-            if 'type' in data[k]:
-                data_type[k] = data[k]['type']
-            for l in data[k].keys():
-                if l == 'properties':
-                    for m in data[k][l].keys():
-                        for n in data[k][l][m].keys():
-                            if 'type' in n:
-                                param.append(data[k][l][m]["type"])
-                                data_type[m] = data[k][l][m]["type"]
+        
+        if 'definitions' in doc:
+            data = doc["definitions"]
+            data_type = {}
+            param = []
+            for k in data.keys():
+                if 'type' in data[k]:
+                    data_type[k] = data[k]['type']
+                for l in data[k].keys():
+                    if l == 'properties':
+                        for m in data[k][l].keys():
+                            for n in data[k][l][m].keys():
+                                if 'type' in n:
+                                    param.append(data[k][l][m]["type"])
+                                    data_type[m] = data[k][l][m]["type"]
 
-
-
-        data = doc["paths"]
-        for k in data.keys():
-            for l in data[k].keys():
+        if 'paths' in doc:
+            data = doc["paths"]
+            for k in data.keys():
+                for l in data[k].keys():
                     for m in data[k][l]["parameters"]:
                         if 'type' in m:
                             data_type[m["name"]] = m["type"]
 
 
-        data = doc["parameters"]
-        for k in data.keys():
-            if 'type' in data[k]:
-                data_type[data[k]['name']] = data[k]['type']
+        if 'parameters' in doc:
+            data = doc["parameters"]
+            for k in data.keys():
+                if 'type' in data[k]:
+                    data_type[data[k]['name']] = data[k]['type']
         
         return data_type
         
@@ -100,7 +102,7 @@ class TestReportGenerator(object):
                 resulttype_key, resulttype_value = resulttype.strip().split(':')
                 funcname_key, funcname_value = funcname.strip().split(':', 1)
                 result_key, result_value = result.strip().split(':')
-                if (httpresponse_value.replace(' ', '') == '400'):
+                if (httpresponse_value.replace(' ', '') == '400' or httpresponse_value.replace(' ', '') == '404'):
                     negative_scenerio_results[funcname_value] = "pass"
                 else:
                     negative_scenerio_results[funcname_value] = "fail"
@@ -125,7 +127,7 @@ class TestReportGenerator(object):
                 httpresponse_key, httpresponse_value = httpresponse.strip().split(':')
                 resulttype_key, resulttype_value = resulttype.strip().split(':')
                 funcname_key, funcname_value = funcname.strip().split(':', 1)
-                result_key, result_value = result.strip().split(':')
+                result_key, result_value = result.strip().split(':', 1)
         
                 if 'bravado_core.model' in resulttype_value:
                     resulttype_value = 'object'
@@ -187,7 +189,7 @@ class TestReportGenerator(object):
         <body>
         <table border="1">"""
  
-        print>>outfile, "<tr bgcolor=grey><th>TestCase</th><th>Result</th></tr>"
+        print>>outfile, "<tr bgcolor=lightgrey><th>TestCase</th><th>Result</th></tr>"
  
         for keys,values in positive_scenerio_results.items():
             if(values == "pass"):
